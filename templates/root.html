@@ -1,7 +1,22 @@
 <div id="sidebar-first" ng-controller="beanstalkCommits">
-  <beanstalk-commit ng-repeat="commit in commits | orderBy:'commit.time'" repository="{{commit.repository}}" time="{{commit.time}}" email="{{commit.email}}" message="{{commit.message}}"></beanstalk-commit>
+  <div class="commit" ng-repeat="commit in commits">
+    <span class="date">{{commit.time}}</span>
+    <gravatar-image data-gravatar-email="commit.email" data-gravatar-size="60"></gravatar-image>
+    <span class="project"> In: {{commit.repository}}</span>
+    <h2>{{commit.message}}</h2>
+  </div>
 </div>
 
 <div id="content" ng-controller="beanstalkRepositories">
-  <beanstalk-repository ng-repeat="repository in repositories" title="{{repository.title}}" users="repository.users" commits="{{repository.commits}}"></beanstalk-repository>
+  <div class="project-node" ng-repeat="repository in repositories | orderBy:predicate">
+    <h2>{{repository.title}}</h2>
+
+    <div class="members">
+      <gravatar-image ng-repeat="email in repository.users" data-gravatar-email="email"></gravatar-image>
+    </div>
+
+    <div class="many-commits">
+      <h3><span>{{repository.commits}}</span> Commits</h3>
+    </div>
+  </div>
 </div>
