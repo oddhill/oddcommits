@@ -49,3 +49,12 @@
 	font-weight: normal;
 	font-style: normal;
 }
+
+@mixin avatar {
+  float: left;
+  border-radius: 50%;
+  border: 3px solid $border-color;
+  margin-right: 10px;
+  width: 60px;
+  height: 60px;
+}
