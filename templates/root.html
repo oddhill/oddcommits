@@ -1,0 +1,7 @@
+<div id="sidebar-first" ng-controller="beanstalkCommits">
+  <beanstalk-commit ng-repeat="commit in commits | orderBy:'commit.time'" repository="{{commit.repository}}" time="{{commit.time}}" email="{{commit.email}}" message="{{commit.message}}"></beanstalk-commit>
+</div>
+
+<div id="content" ng-controller="beanstalkRepositories">
+  <beanstalk-repository ng-repeat="repository in repositories" title="{{repository.title}}" users="repository.users" commits="{{repository.commits}}"></beanstalk-repository>
+</div>
