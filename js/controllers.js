@@ -1,22 +1,36 @@
 var beanstalkControllers = angular.module('beanstalkControllers', []);
 
 beanstalkControllers.controller('beanstalkCommits', function($scope, $rootScope, $timeout, $http) {
-  $scope.commits = {};
-  $scope.repositories = {};
+  $scope.commits = [];
+  $scope.repositoryNames = {};
+
+  var findCommitKey = function(revision) {
+    var found = false;
+
+    angular.forEach($scope.commits, function(value, key) {
+      if (value.revision == revision) {
+        found = key;
+        return;
+      }
+    });
+
+    return found;
+  };
 
   var addCommit = function(data) {
     var date = new Date(data.time);
 
     var commit = {
+      revision: data.revision,
       repository_id: data.repository_id,
-      repository: $scope.repositories[data.repository_id],
+      repository: $scope.repositoryNames[data.repository_id],
       time: date.getTime(),
       user_id: data.user_id,
       email: data.email,
       message: data.message.replace(/\n(.|\n)+/gi, '')
     };
 
-    $scope.commits[data.revision] = commit;
+    $scope.commits.push(commit);
     $rootScope.$broadcast('newCommit', commit);
   };
 
@@ -24,6 +38,23 @@ beanstalkControllers.controller('beanstalkCommits', function($scope, $rootScope,
     $http.get('/api/changesets.php').
       success(function(data, status) {
         angular.forEach(data, function(commit) {
+          if (!findCommitKey(commit.revision_cache.revision)) {
+            if (typeof $scope.repositoryNames[commit.revision_cache.repository_id] == 'undefined') {
+              $http.get('/api/repository.php', {params: {id: commit.revision_cache.repository_id}}).
+                success(function(data, status) {
+                  $scope.repositoryNames[data.repository.id] = data.repository.title;
+                  $rootScope.$broadcast('newRepository', data.repository);
+                  addCommit(commit.revision_cache);
+                });
+            }
+            else {
+              addCommit(commit.revision_cache);
+            }
+          }
+
+          return;
+
+
           if (typeof $scope.commits[commit.revision_cache.revision] == 'undefined') {
             if (typeof commit.repository == 'undefined') {
               $http.get('/api/repository.php', {params: {id: commit.revision_cache.repository_id}}).
@@ -48,21 +79,38 @@ beanstalkControllers.controller('beanstalkCommits', function($scope, $rootScope,
 });
 
 beanstalkControllers.controller('beanstalkRepositories', function($scope, $http) {
-  $scope.repositories = {};
+  $scope.repositories = [];
+
+  var findRepositoryKey = function(id) {
+    var found = false;
+
+    angular.forEach($scope.repositories, function(value, key) {
+      if (value.id == id) {
+        found = key;
+        return;
+      }
+    });
+
+    return found;
+  };
 
   $scope.$on('newRepository', function(event, repository) {
-    if (typeof $scope.repositories[repository.id] == 'undefined') {
-      $scope.repositories[repository.id] = {
+    if (!findRepositoryKey(repository.id)) {
+      $scope.repositories.push({
+        id: repository.id,
         title: repository.title,
-        commits: 0,
+        commits: 1,
         users: {}
-      };
+      });
     }
   });
 
   $scope.$on('newCommit', function(event, commit) {
-    $scope.repositories[commit.repository_id].users[commit.user_id] = commit.email;
-    $scope.repositories[commit.repository_id].commits = $scope.repositories[commit.repository_id].commits + 1;
+    var repositoryKey = findRepositoryKey(commit.repository_id);
+    if (repositoryKey) {
+      $scope.repositories[repositoryKey].users[commit.user_id] = commit.email;
+      $scope.repositories[repositoryKey].commits = $scope.repositories[repositoryKey].commits + 1;
+    }
   });
 
 });

@@ -1,5 +1,5 @@
 <div id="sidebar-first" ng-controller="beanstalkCommits">
-  <div class="commit" ng-repeat="commit in commits">
+  <div class="commit" ng-repeat="commit in commits | orderBy:'-time'">
     <span class="date">{{commit.time | date:'HH:mm'}}</span>
     <gravatar-image data-gravatar-email="commit.email" data-gravatar-size="60"></gravatar-image>
     <span class="project"> In: {{commit.repository}}</span>
@@ -8,7 +8,7 @@
 </div>
 
 <div id="content" ng-controller="beanstalkRepositories">
-  <div class="project-node" ng-repeat="repository in repositories | orderBy:predicate">
+  <div class="project-node" ng-repeat="repository in repositories | orderBy:'-commits'">
     <h2>{{repository.title}}</h2>
 
     <div class="many-commits">
