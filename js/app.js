@@ -1,4 +1,4 @@
-var beanstalk = angular.module('beanstalk', ['beanstalkDirectives', 'beanstalkControllers', 'ngRoute', 'ngResource', 'md5', 'ui-gravatar']);
+var beanstalk = angular.module('beanstalk', ['beanstalkDirectives', 'beanstalkControllers', 'ngRoute', 'md5', 'ui-gravatar']);
 
 beanstalk.config(function($routeProvider, $locationProvider) {
   $routeProvider.
