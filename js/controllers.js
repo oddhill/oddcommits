@@ -19,6 +19,11 @@ beanstalkControllers.controller('beanstalkCommits', function($scope, $rootScope,
 
   var addCommit = function(data) {
     var date = new Date(data.time);
+    var previousMonday = $rootScope.getPreviousMonday();
+
+    if (date.getTime() < previousMonday.getTime()) {
+      return;
+    }
 
     var commit = {
       revision: data.revision,
@@ -56,6 +61,11 @@ beanstalkControllers.controller('beanstalkCommits', function($scope, $rootScope,
         $timeout(getChangesets, 5000);
       });
   })();
+
+  $scope.$on('clearData', function(event) {
+    $scope.commits = [];
+    $scope.repositoryNames = {};
+  });
 });
 
 beanstalkControllers.controller('beanstalkRepositories', function($scope, $http) {
@@ -93,4 +103,7 @@ beanstalkControllers.controller('beanstalkRepositories', function($scope, $http)
     }
   });
 
+  $scope.$on('clearData', function(event) {
+    $scope.repositories = [];
+  });
 });
