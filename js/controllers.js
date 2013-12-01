@@ -51,26 +51,6 @@ beanstalkControllers.controller('beanstalkCommits', function($scope, $rootScope,
               addCommit(commit.revision_cache);
             }
           }
-
-          return;
-
-
-          if (typeof $scope.commits[commit.revision_cache.revision] == 'undefined') {
-            if (typeof commit.repository == 'undefined') {
-              $http.get('/api/repository.php', {params: {id: commit.revision_cache.repository_id}}).
-                success(function(data, status) {
-                  $scope.repositories[data.repository.id] = data.repository.title;
-                  $rootScope.$broadcast('newRepository', data.repository);
-
-                  addCommit(commit.revision_cache);
-                });
-            }
-            else {
-
-              addCommit(commit.revision_cache);
-            }
-          }
-
         });
 
         $timeout(getChangesets, 5000);
