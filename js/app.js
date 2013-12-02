@@ -26,10 +26,8 @@ beanstalk.run(function($rootScope, $timeout) {
   };
 
   $rootScope.getPreviousMonday = function() {
-    var previousMonday = new Date();
-    var nextMonday = $rootScope.getNextMonday();
-
-    previousMonday.setDate(nextMonday.getDate() - 7);
+    var previousMonday = $rootScope.getNextMonday();
+    previousMonday.setDate(previousMonday.getDate() - 7);
 
     return previousMonday;
   };
