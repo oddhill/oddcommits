@@ -89,7 +89,7 @@ beanstalkControllers.controller('beanstalkRepositories', function($scope, $http)
       $scope.repositories.push({
         id: repository.id,
         title: repository.title,
-        commits: 1,
+        commits: 0,
         users: {}
       });
     }
