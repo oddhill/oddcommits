@@ -9,7 +9,7 @@ var request = require('request-json');
 var client = request.createClient('https://' + process.env.BEANSTALK_ACCOUNT + '.beanstalkapp.com/api/', {
   headers: {
     'Content-Type': 'application/json',
-    'User-Agent': 'Beanstalker'
+    'User-Agent': 'Odd Commits'
   }
 });
 client.setBasicAuth(process.env.BEANSTALK_USERNAME, process.env.BEANSTALK_TOKEN);
