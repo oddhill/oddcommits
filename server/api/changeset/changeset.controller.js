@@ -1,8 +1,10 @@
 'use strict';
 
-var _ = require('lodash');
+var beanstalk = require('../../components/beanstalk');
 
 // Get list of changesets
 exports.index = function(req, res) {
-  res.json([]);
+  beanstalk.get('changesets.json', function(error, response, body) {
+    res.json(body);
+  });
 };
