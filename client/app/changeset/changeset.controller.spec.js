@@ -15,8 +15,7 @@ describe('Controller: ChangesetCtrl', function () {
     });
   }));
 
-  it('should ...', function () {
-    console.log(ChangesetCtrl);
-    expect(1).toEqual(1);
+  it('should contain an empty object of commits', function () {
+    expect(scope.commits).toEqual({});
   });
 });
