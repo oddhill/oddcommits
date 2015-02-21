@@ -6,7 +6,7 @@
 
 // Create the client with the required headers and basic authentication.
 var request = require('request-json');
-var client = request.newClient('https://' + process.env.BEANSTALK_ACCOUNT + '.beanstalkapp.com/api/', {
+var client = request.createClient('https://' + process.env.BEANSTALK_ACCOUNT + '.beanstalkapp.com/api/', {
   headers: {
     'Content-Type': 'application/json',
     'User-Agent': 'Beanstalker'
