@@ -1,39 +1,29 @@
 'use strict';
 
-var should = require('should');
 var app = require('../../app');
-var request = require('supertest');
-var assert = require('assert');
+var should = require('should');
+var request = require('request');
 
-describe('GET /api/changesets', function() {
+describe('changeset endpoint', function() {
+  // Store the returned changesets in a variable since this will be used
+  // throughout the tests.
+  var changesets;
 
-  it('should respond with JSON array', function(done) {
-    request(app)
-      .get('/api/changesets')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) return done(err);
-        res.body.should.be.instanceof(Array);
-        done();
-      });
+  // Fetch the changeset index before any tests.
+  before('fetch data from the index', function(done) {
+    request.get('http://localhost:9000/api/changesets', function(err, res, body) {
+      changesets = JSON.parse(body);
+      done();
+    });
   });
 
-  it('should include revision_cache objects', function(done) {
-    request(app)
-      .get('/api/changesets')
-      .end(function(err, res) {
-        if (err) return done(err);
+  describe('changeset index', function() {
+    it('should respond with an array', function() {
+      changesets.should.be.an.Array;
+    });
 
-        // Parse the resturned text as JSON.
-        var changesets = JSON.parse(res.text);
-
-        // Assert that there is a value in the array, and that the first value
-        // contans the revision cache object.
-        assert(typeof changesets[0] == 'object');
-        assert(typeof changesets[0].revision_cache == 'object');
-
-        done();
-      });
+    it('should include revision_cache objects', function() {
+      changesets[0].revision_cache.should.be.an.Object;
+    });
   });
 });

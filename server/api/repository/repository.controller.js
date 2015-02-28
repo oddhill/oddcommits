@@ -8,3 +8,10 @@ exports.index = function(req, res) {
     res.json(body);
   });
 };
+
+// Get specific repository.
+exports.repository = function(req, res) {
+  beanstalk.get('repositories/' + req.params.id + '.json', function(error, response, body) {
+    res.json(body);
+  });
+};

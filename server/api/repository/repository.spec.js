@@ -1,39 +1,55 @@
 'use strict';
 
-var should = require('should');
 var app = require('../../app');
-var request = require('supertest');
-var assert = require('assert');
+var should = require('should');
+var request = require('request');
 
-describe('GET /api/repositories', function() {
+describe('repository endpoint', function() {
+  // Store the returned repositories in a variable since these will be used
+  // throughout the tests.
+  var repositories;
 
-  it('should respond with JSON array', function(done) {
-    request(app)
-      .get('/api/repositories')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) return done(err);
-        res.body.should.be.instanceof(Array);
-        done();
-      });
+  // Fetch the repository index before any tests.
+  before('fetch data from the index', function(done) {
+    request.get('http://localhost:9000/api/repositories', function(err, res, body) {
+      repositories = JSON.parse(body);
+      done();
+    });
   });
 
-  it('should include repository objects', function(done) {
-    request(app)
-      .get('/api/repositories')
-      .end(function(err, res) {
-        if (err) return done(err);
+  describe('repository index', function() {
+    it('should respond with an array', function() {
+      repositories.should.be.an.Array;
+    });
 
-        // Parse the resturned text as JSON.
-        var repositories = JSON.parse(res.text);
+    it('should include repository objects', function() {
+      repositories[0].repository.should.be.an.Object;
+    });
+  });
 
-        // Assert that there is a value in the array, and that the first value
-        // contans the repository object.
-        assert(typeof repositories[0] == 'object');
-        assert(typeof repositories[0].repository == 'object');
+  describe('repository details', function() {
+    // Store the response in a variable as this will be used throught the
+    // tests.
+    var response;
 
+    // Fetch details from the first repository before any tests.
+    before('fetch data from the first repository', function(done) {
+      request.get('http://localhost:9000/api/repositories/' + repositories[0].repository.id, function(err, res, body) {
+        response = JSON.parse(body);
         done();
       });
+    });
+
+    it('should respond with an object', function() {
+      response.should.be.an.Object;
+    });
+
+    it('should include a single repository object', function() {
+      response.repository.should.be.an.Object;
+    });
+
+    it('should include the name of the repository', function() {
+      response.repository.name.should.be.a.String;
+    });
   });
 });
