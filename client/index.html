@@ -27,15 +27,27 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div ng-controller="ChangesetCtrl">
-      <div ng-repeat="commit in commits">
-        {{commit.message}}
+    <div id="sidebar-first" ng-controller="ChangesetCtrl">
+      <div class="commit" ng-repeat="commit in commits | orderBy:'-time'">
+        <span class="date">{{commit.time | date:'HH:mm'}}</span>
+        <img gravatar-src="commit.email" gravatar-size="60">
+        <span class="project"> In: {{commit.repository}}</span>
+        <h2>{{commit.message}}</h2>
       </div>
     </div>
 
-    <div ng-controller="RepositoryCtrl">
-      <div ng-repeat="repository in repositories">
-        {{repository.message}}
+    <div id="content" ng-controller="RepositoryCtrl">
+      <div class="project-node" ng-repeat="repository in repositories | orderBy:'-commitsCount'">
+        <h2>{{repository.title}}</h2>
+
+        <div class="many-commits">
+          <h3><span class="commits">{{repository.commitsCount}}</span> <span class="suffix">Commits</span></h3>
+        </div>
+
+        <div class="members">
+          <img ng-repeat="email in repository.users" gravatar-src="email" gravatar-size="60">
+        </div>
+
       </div>
     </div>
 
