@@ -4,7 +4,8 @@ angular.module('oddcommitsApp', [
   'ngCookies',
   'ngResource',
   'ngSanitize',
-  'ngRoute'
+  'ngRoute',
+  'ui.gravatar'
 ])
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider
