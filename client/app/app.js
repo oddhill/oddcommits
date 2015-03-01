@@ -5,7 +5,8 @@ angular.module('oddcommitsApp', [
   'ngResource',
   'ngSanitize',
   'ngRoute',
-  'ui.gravatar'
+  'ui.gravatar',
+  'srph.timestamp-filter'
 ])
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider

@@ -29,7 +29,7 @@
     <!-- Add your site or application content here -->
     <div id="sidebar-first" ng-controller="ChangesetCtrl">
       <div class="commit" ng-repeat="commit in commits | orderBy:'-time'">
-        <span class="date">{{commit.time | date:'HH:mm'}}</span>
+        <span class="date">{{commit.time | timestamp | date:'HH:mm'}}</span>
         <img gravatar-src="commit.email" gravatar-size="60">
         <span class="project"> In: {{commit.repository}}</span>
         <h2>{{commit.message}}</h2>
@@ -66,6 +66,7 @@
       <script src="bower_components/lodash/dist/lodash.compat.js"></script>
       <script src="bower_components/angular-gravatar/build/md5.js"></script>
       <script src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
+      <script src="bower_components/angular-srph-timestamp-filter/angular-timestamp-filter.js"></script>
       <!-- endbower -->
     <!-- endbuild -->
 
