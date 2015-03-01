@@ -7,6 +7,9 @@ angular.module('oddcommitsApp')
       getChangeset: {
         url: '/api/changesets',
         isArray: true
+      },
+      getRepository: {
+        url: '/api/repositories/:id'
       }
     });
   });
