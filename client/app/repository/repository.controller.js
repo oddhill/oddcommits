@@ -12,9 +12,12 @@ angular.module('oddcommitsApp')
         if (!$scope.repositories[repository.id]) {
           $scope.repositories[repository.id] = repository;
           $scope.repositories[repository.id].commitsCount = 1;
+          $scope.repositories[repository.id].users = {};
+          $scope.repositories[repository.id].users[commit.user_id] = commit.email;
         }
         else {
           $scope.repositories[repository.id].commitsCount++;
+          $scope.repositories[repository.id].users[commit.user_id] = commit.email;
         }
       });
     });
