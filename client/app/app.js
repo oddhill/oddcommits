@@ -18,11 +18,17 @@ angular.module('oddcommitsApp', [
     $locationProvider.html5Mode(true);
   })
   .run(function($rootScope, beanstalk) {
-    // Get the changeset.
-    beanstalk.getChangeset(function(commits) {
-      // Broadcast an event for each commit.
-      angular.forEach(commits, function(commit) {
-        $rootScope.$broadcast('new-commit', commit.revision_cache);
+    // Create a function that retrieves the changeset, and invoke it
+    // immediately.
+    (function getChangeset() {
+      beanstalk.getChangeset({per_page: 30}, function(commits) {
+        // Broadcast an event for each commit.
+        angular.forEach(commits, function(commit) {
+          $rootScope.$broadcast('new-commit', commit.revision_cache);
+        });
       });
-    });
+
+      // Call this function again, after 60 seconds.
+      setTimeout(getChangeset, 60 * 1000);
+    })();
   });
