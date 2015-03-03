@@ -91,25 +91,25 @@ angular.module('oddcommitsApp')
 
     // Watch for the new-commit event.
     $scope.$on('new-commit', function(event, commit) {
-      // Add this commit to the scope.
-      addCommit(commit);
-
-      // Update the corresponding repository.
-      if (!$scope.repositories[commit.repository_id]) {
-        // The repository doesn't exist in the scope. Fetch the details for this
-        // repository in order to add them to the scope.
-        beanstalk.getRepository({id: commit.repository_id}, function(data) {
-          // Add the repository, increase the commit count and add the user to
-          // this repository.
-          addRepository(data.repository);
-          incrementRepositoryCommitsCount(data.repository.id);
-          addUserToRepository(data.repository.id, commit.email);
-        });
-      }
-      else {
-        // Increase the commit count and add the user to the repository.
-        incrementRepositoryCommitsCount(commit.repository_id);
-        addUserToRepository(commit.repository_id, commit.email);
+      // Add the commit to the scope, and update the corresponding repository if
+      // the commit was added successfully.
+      if (addCommit(commit)) {
+        if (!$scope.repositories[commit.repository_id]) {
+          // The repository doesn't exist in the scope. Fetch the details for this
+          // repository in order to add them to the scope.
+          beanstalk.getRepository({id: commit.repository_id}, function(data) {
+            // Add the repository, increase the commit count and add the user to
+            // this repository.
+            addRepository(data.repository);
+            incrementRepositoryCommitsCount(data.repository.id);
+            addUserToRepository(data.repository.id, commit.email);
+          });
+        }
+        else {
+          // Increase the commit count and add the user to the repository.
+          incrementRepositoryCommitsCount(commit.repository_id);
+          addUserToRepository(commit.repository_id, commit.email);
+        }
       }
     });
   });
