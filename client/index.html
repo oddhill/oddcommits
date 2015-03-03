@@ -28,7 +28,7 @@
 
     <!-- Add your site or application content here -->
     <div id="sidebar-first">
-      <div class="commit" ng-repeat="commit in commits | orderBy:'-time'">
+      <div class="commit" ng-repeat="commit in commits | toArray | orderBy:'-time'">
         <span class="date">{{commit.time | timestamp | date:'EEEE HH:mm'}}</span>
         <img gravatar-src="commit.email" gravatar-size="60">
         <span class="project"> In: {{repositories[commit.repository_id].title}}</span>
@@ -37,7 +37,7 @@
     </div>
 
     <div id="content">
-      <div class="project-node" ng-repeat="repository in repositories | orderBy:'-commitsCount'">
+      <div class="project-node" ng-repeat="repository in repositories | toArray | orderBy:'-commitsCount'">
         <h2>{{repository.title}}</h2>
 
         <div class="many-commits">
@@ -67,6 +67,7 @@
       <script src="bower_components/angular-gravatar/build/md5.js"></script>
       <script src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
       <script src="bower_components/angular-srph-timestamp-filter/angular-timestamp-filter.js"></script>
+      <script src="bower_components/angular-toArrayFilter/toArrayFilter.js"></script>
       <!-- endbower -->
     <!-- endbuild -->
 
