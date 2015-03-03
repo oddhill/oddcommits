@@ -21,22 +21,22 @@
       <!-- endinjector -->
     <!-- endbuild -->
   </head>
-  <body ng-app="oddcommitsApp">
+  <body ng-app="oddcommitsApp" ng-controller="MainCtrl">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div id="sidebar-first" ng-controller="ChangesetCtrl">
+    <div id="sidebar-first">
       <div class="commit" ng-repeat="commit in commits | orderBy:'-time'">
-        <span class="date">{{commit.time | timestamp | date:'HH:mm'}}</span>
+        <span class="date">{{commit.time | timestamp | date:'EEEE HH:mm'}}</span>
         <img gravatar-src="commit.email" gravatar-size="60">
-        <span class="project"> In: {{commit.repository}}</span>
+        <span class="project"> In: {{repositories[commit.repository_id].title}}</span>
         <h2>{{commit.message}}</h2>
       </div>
     </div>
 
-    <div id="content" ng-controller="RepositoryCtrl">
+    <div id="content">
       <div class="project-node" ng-repeat="repository in repositories | orderBy:'-commitsCount'">
         <h2>{{repository.title}}</h2>
 
@@ -74,8 +74,7 @@
         <script src="app/app.js"></script>
           <!-- injector:js -->
           <script src="app/beanstalk/beanstalk.service.js"></script>
-          <script src="app/changeset/changeset.controller.js"></script>
-          <script src="app/repository/repository.controller.js"></script>
+          <script src="app/main/main.controller.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->
 </body>
