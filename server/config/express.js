@@ -31,7 +31,7 @@ module.exports = function(app) {
     // Limit access to a specific IP address.
     app.use(function(req, res, next) {
       // Get the remote address.
-      var remoteAddr = req.connection.remoteAddress;
+      var remoteAddr = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
       if (remoteAddr == process.env.LIMIT_REMOTE_ADDR) {
         // Access from this address is allowed.
