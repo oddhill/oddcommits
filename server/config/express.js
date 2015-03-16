@@ -28,6 +28,21 @@ module.exports = function(app) {
   app.use(cookieParser());
   
   if ('production' === env) {
+    // Limit access to a specific IP address.
+    app.use(function(req, res, next) {
+      // Get the remote address.
+      var remoteAddr = req.connection.remoteAddress;
+
+      if (remoteAddr == process.env.LIMIT_REMOTE_ADDR) {
+        // Access from this address is allowed.
+        next();
+      }
+      else {
+        // Access from any other address isn't allowed.
+        res.status(403).send('Access from ' + remoteAddr + ' is not allowed.');
+      }
+    });
+
     app.use(favicon(path.join(config.root, 'public', 'favicon.ico')));
     app.use(express.static(path.join(config.root, 'public')));
     app.set('appPath', config.root + '/public');
