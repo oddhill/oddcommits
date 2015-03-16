@@ -18,6 +18,10 @@ angular.module('oddcommitsApp')
      */
     var addCommit = function(commit) {
       if (!$scope.commits[commit.revision]) {
+        // Replace the message with everything before the first new line
+        // character.
+        commit.message = commit.message.match(/^.+(\n|)/)[0];
+
         // Add the commit to the scope and return true.
         $scope.commits[commit.revision] = commit;
         return true;
