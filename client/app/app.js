@@ -17,18 +17,14 @@ angular.module('oddcommitsApp', [
 
     $locationProvider.html5Mode(true);
   })
-  .run(function($rootScope, beanstalk) {
-    // Create a function that retrieves the changeset, and invoke it
-    // immediately.
-    (function getChangeset() {
-      beanstalk.getChangeset({per_page: 30}, function(commits) {
-        // Broadcast an event for each commit.
-        angular.forEach(commits, function(commit) {
-          $rootScope.$broadcast('new-commit', commit.revision_cache);
-        });
-      });
+  .run(function($rootScope, $window, $timeout, model) {
+    // Add timestamps for the start and end of the current week to the root
+    // scope.
+    $rootScope.startOfWeek = moment().startOf('isoWeek').unix();
+    $rootScope.endOfWeek = moment().endOf('isoWeek').unix();
 
-      // Call this function again, after 60 seconds.
-      setTimeout(getChangeset, 60 * 1000);
-    })();
+    // Reload the window when the next week begins.
+    $timeout(function() {
+      $window.location.reload();
+    }, ($rootScope.endOfWeek - moment().unix()) * 1000);
   });
