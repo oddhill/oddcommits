@@ -27,4 +27,7 @@ angular.module('oddcommitsApp', [
     $timeout(function() {
       $window.location.reload();
     }, ($rootScope.endOfWeek - moment().unix()) * 1000);
+
+    // Start fetching commits.
+    model.getCommits();
   });
