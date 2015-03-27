@@ -101,7 +101,7 @@ angular.module('oddcommitsApp')
         if (!$scope.repositories[commit.repository_id]) {
           // The repository doesn't exist in the scope. Fetch the details for this
           // repository in order to add them to the scope.
-          beanstalk.getRepository({id: commit.repository_id}, function(data) {
+          beanstalk.api.getRepository({id: commit.repository_id}, function(data) {
             // Add the repository, increase the commit count and add the user to
             // this repository.
             addRepository(data.repository);
