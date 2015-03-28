@@ -5,15 +5,15 @@ angular.module('oddcommitsApp')
     // Resource for communicating with the backend.
     var api = $resource('/', {}, {
       getChangeset: {
-        url: '/api/changesets',
+        url: '/api/beanstalk/changesets.json',
         isArray: true
       },
       getRepositories: {
-        url: '/api/repositories',
+        url: '/api/beanstalk/repositories.json',
         isArray: true
       },
       getRepository: {
-        url: '/api/repositories/:id'
+        url: '/api/beanstalk/repositories/:id.json'
       }
     });
 
