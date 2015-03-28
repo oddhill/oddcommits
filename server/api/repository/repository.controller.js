@@ -1,10 +1,14 @@
 'use strict';
 
 var beanstalk = require('../../components/beanstalk');
+var querystring = require('querystring');
 
 // Get list of repositories
 exports.index = function(req, res) {
-  beanstalk.get('repositories.json', function(error, response, body) {
+  // Create a query string from the passed in query object.
+  var query = querystring.stringify(req.query);
+
+  beanstalk.get('repositories.json' + (query ? '?' + query : ''), function(error, response, body) {
     res.json(body);
   });
 };

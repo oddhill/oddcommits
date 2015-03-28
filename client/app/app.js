@@ -29,5 +29,5 @@ angular.module('oddcommitsApp', [
     }, ($rootScope.endOfWeek - moment().unix()) * 1000);
 
     // Start fetching commits.
-    beanstalk.getCommits();
+    beanstalk.init();
   });

@@ -30,8 +30,8 @@
     <div id="sidebar-first">
       <div class="commit" ng-repeat="commit in commits | toArray | orderBy:'-time'">
         <span class="date">{{commit.time | timestamp | date:'EEEE HH:mm'}}</span>
-        <img gravatar-src="commit.email" gravatar-size="60">
-        <span class="project"> In: {{repositories[commit.repository_id].title}}</span>
+        <img gravatar-src="commit.user" gravatar-size="60">
+        <span class="project"> In: {{commit.repository.title}}</span>
         <h2>{{commit.message}}</h2>
       </div>
     </div>
@@ -45,7 +45,7 @@
         </div>
 
         <div class="members">
-          <img ng-repeat="email in repository.users" gravatar-src="email" gravatar-size="60">
+          <img ng-repeat="user in repository.users" gravatar-src="user" gravatar-size="60">
         </div>
 
       </div>

@@ -1,11 +1,15 @@
 'use strict';
 
 angular.module('oddcommitsApp')
-  .service('beanstalk', function ($resource, $rootScope) {
+  .service('beanstalk', function ($resource, $rootScope, $timeout) {
     // Resource for communicating with the backend.
     var api = $resource('/', {}, {
       getChangeset: {
         url: '/api/changesets',
+        isArray: true
+      },
+      getRepositories: {
+        url: '/api/repositories',
         isArray: true
       },
       getRepository: {
@@ -15,6 +19,65 @@ angular.module('oddcommitsApp')
 
     // Store the hash of the commits that has been processed.
     var processedCommits = [];
+
+    // Store the names of the repositories. These needs to be handled manually
+    // since they're not included in the changeset.
+    var repositoryNames = {};
+
+    /**
+     * Process a commit.
+     *
+     * @param obj data
+     *   The commit data as its returned by the API.
+     *
+     * @return obj
+     *   The commit object, formatted in a way which the controller will be able
+     *   to handle.
+     */
+    var processCommit = function(data) {
+      return {
+        revision: data.revision,
+        repository: {
+          id: data.repository_id,
+          title: repositoryNames[data.repository_id]
+        },
+        message: data.message.match(/^.+(\n|)/)[0],
+        user: data.email,
+        time: data.time
+      };
+    };
+
+    /**
+     * Get every repository title.
+     *
+     * This will be used as the init function. It will get the title of every
+     * repository, since these will be used for the commits later on.
+     *
+     * @param int currentPage
+     *   Internal use only. Specifies which page that should be fetched.
+     */
+    var getRepositoryTitles = function(currentPage) {
+      // Default to the first page, if one hasn't been specified.
+      currentPage = currentPage ? currentPage : 1;
+
+      // Fetch the repositories for the current page.
+      api.getRepositories({page: currentPage, per_page: 50}, function(repositories) {
+        // Save the title for every repository.
+        angular.forEach(repositories, function(repository) {
+          repositoryNames[repository.repository.id] = repository.repository.title;
+        });
+
+        // We should check the next page for more repositories if we've got
+        // exactly 50 repositories for this request. Otherwise, we'll start
+        // fetching commits.
+        if (repositories.length === 50) {
+          getRepositoryTitles(currentPage + 1);
+        }
+        else {
+          getCommits();
+        }
+      });
+    };
 
     /**
      * Gets commits.
@@ -39,21 +102,40 @@ angular.module('oddcommitsApp')
             // This commit has already been processed, which means that there
             // are no more commits to fetch.
             fetchNextPage = false;
-            return;
           }
 
           if (moment(commit.revision_cache.time).unix() < $rootScope.startOfWeek) {
             // This commit is older than the specified time, stop fetching older
-            // commits, and exit.
+            // commits.
             fetchNextPage = false;
+          }
+
+          // Exit if we should fetch the next page.
+          if (!fetchNextPage) {
             return;
           }
 
-          // Add the hash of this commit to the array of processed commits.
-          processedCommits.push(commit.revision_cache.revision);
+          // Prepare the commit.
+          var commit = processCommit(commit.revision_cache);
 
-          // Broadcast an event for this commit.
-          $rootScope.$broadcast('new-commit', commit.revision_cache);
+          // Add the hash of this commit to the array of processed commits.
+          processedCommits.push(commit.revision);
+
+          if (commit.repository.title) {
+            // We've got the title for this repository. Broadcast an event
+            // right away.
+            $rootScope.$broadcast('new-commit', commit);
+          }
+          else {
+            // We haven't got a title for this repository. Get the details from
+            // the API, add the title to the commit object, and broadcast an
+            // event once finished.
+            api.getRepository({id: commit.repository.id}, function(repository) {
+              repositoryNames[commit.repository_id] = repository.title;
+              commit.repository.title = repository.title;
+              $rootScope.$broadcast('new-commit', commit);
+            });
+          }
         });
 
         if (fetchNextPage) {
@@ -68,8 +150,5 @@ angular.module('oddcommitsApp')
     };
 
     // Return the service.
-    return {
-      getCommits: getCommits,
-      api: api
-    };
+    return {init: getRepositoryTitles};
   });
