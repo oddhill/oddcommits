@@ -131,8 +131,8 @@ angular.module('oddcommitsApp')
             // the API, add the title to the commit object, and broadcast an
             // event once finished.
             api.getRepository({id: commit.repository.id}, function(repository) {
-              repositoryNames[commit.repository_id] = repository.title;
-              commit.repository.title = repository.title;
+              repositoryNames[commit.repository_id] = repository.repository.title;
+              commit.repository.title = repository.repository.title;
               $rootScope.$broadcast('new-commit', commit);
             });
           }
