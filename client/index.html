@@ -29,7 +29,7 @@
     <!-- Add your site or application content here -->
     <div id="sidebar-first">
       <div class="commit" ng-repeat="commit in commits | toArray | orderBy:'-time'">
-        <span class="date">{{commit.time | timestamp | date:'EEEE HH:mm'}}</span>
+        <span class="date">{{commit.time | date:'EEEE HH:mm'}}</span>
         <img gravatar-src="commit.user" gravatar-size="60">
         <span class="project"> In: {{commit.repository.title}}</span>
         <h2>{{commit.message}}</h2>

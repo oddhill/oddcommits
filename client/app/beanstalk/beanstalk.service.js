@@ -43,7 +43,7 @@ angular.module('oddcommitsApp')
         },
         message: data.message.match(/^.+(\n|)/)[0],
         user: data.email,
-        time: data.time
+        time: new Date(data.time).toISOString()
       };
     };
 
@@ -104,7 +104,7 @@ angular.module('oddcommitsApp')
             fetchNextPage = false;
           }
 
-          if (moment(commit.revision_cache.time).unix() < $rootScope.startOfWeek) {
+          if (new Date(commit.revision_cache.time).getTime() < $rootScope.startOfWeek) {
             // This commit is older than the specified time, stop fetching older
             // commits.
             fetchNextPage = false;

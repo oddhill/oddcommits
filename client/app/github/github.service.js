@@ -37,7 +37,7 @@ angular.module('oddcommitsApp')
         },
         message: commit.commit.message.match(/^.+(\n|)/)[0],
         user: commit.commit.author.email,
-        time: commit.commit.author.date
+        time: new Date(commit.commit.author.date).toISOString()
       };
     };
 
@@ -60,7 +60,7 @@ angular.module('oddcommitsApp')
 
         // Process each commit.
         angular.forEach(events, function(event) {
-          if (moment(event.created_at).unix() < $rootScope.startOfWeek) {
+          if (new Date(event.created_at).getTime() < $rootScope.startOfWeek) {
             // This event is older than the specified time, stop fetching older
             // events.
             fetchNextPage = false;
