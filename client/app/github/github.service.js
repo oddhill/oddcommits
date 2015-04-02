@@ -7,6 +7,9 @@ angular.module('oddcommitsApp')
       getEvents: {
         url: '/api/github/users/olofjohansson/events/orgs/oddhill',
         isArray: true
+      },
+      getCommit: {
+        url: '/api/github/repos/:owner/:repo/commits/:sha'
       }
     });
 
@@ -16,23 +19,25 @@ angular.module('oddcommitsApp')
     /**
      * Process a commit.
      *
-     * @param obj data
+     * @param obj repository
+     *   The repository details.
+     * @param obj commit
      *   The commit data as its returned by the API.
      *
      * @return obj
      *   The commit object, formatted in a way which the controller will be able
      *   to handle.
      */
-    var processCommit = function(repository, commit, time) {
+    var processCommit = function(repository, commit) {
       return {
         revision: commit.sha,
         repository: {
           id: 'github-' + repository.id,
           title: repository.name
         },
-        message: commit.message.match(/^.+(\n|)/)[0],
-        user: commit.author.email,
-        time: time
+        message: commit.commit.message.match(/^.+(\n|)/)[0],
+        user: commit.commit.author.email,
+        time: commit.commit.author.date
       };
     };
 
@@ -80,9 +85,18 @@ angular.module('oddcommitsApp')
           // Add the id of this event to the array of processed events.
           processedEvents.push(event.id);
 
-          // Broadcast an event for every commit.
+          // Fetch the details for every commit in order to get the commit date.
           event.payload.commits.forEach(function(commit) {
-            $rootScope.$broadcast('new-commit', processCommit(event.repo, commit, event.created_at));
+            // Get the owner and repoy by splitting up the repos full name.
+            var owner = event.repo.name.split('/')[0];
+            var repo = event.repo.name.split('/')[1];
+
+            // Get the commit details.
+            api.getCommit({owner: owner, repo: repo, sha: commit.sha}, function(commit) {
+              // Process the commit, and broadcast an event.
+              commit = processCommit(event.repo, commit);
+              $rootScope.$broadcast('new-commit', commit);
+            });
           });
         });
 
