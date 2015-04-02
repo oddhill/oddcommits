@@ -38,7 +38,7 @@ angular.module('oddcommitsApp')
       return {
         revision: data.revision,
         repository: {
-          id: data.repository_id,
+          id: 'beanstalk-' + data.repository_id,
           title: repositoryNames[data.repository_id]
         },
         message: data.message.match(/^.+(\n|)/)[0],

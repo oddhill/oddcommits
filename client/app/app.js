@@ -17,7 +17,7 @@ angular.module('oddcommitsApp', [
 
     $locationProvider.html5Mode(true);
   })
-  .run(function($rootScope, $window, $timeout, beanstalk) {
+  .run(function($rootScope, $window, $timeout, beanstalk, github) {
     // Add timestamps for the start and end of the current week to the root
     // scope.
     $rootScope.startOfWeek = moment().startOf('isoWeek').unix();
@@ -30,4 +30,5 @@ angular.module('oddcommitsApp', [
 
     // Start fetching commits.
     beanstalk.init();
+    github.init();
   });
