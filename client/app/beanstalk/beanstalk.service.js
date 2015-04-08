@@ -98,7 +98,7 @@ angular.module('oddcommitsApp')
 
         // Process each commit.
         angular.forEach(commits, function(commit) {
-          if (processedCommits.length && processedCommits[0] == commit.revision_cache.revision) {
+          if (processedCommits.indexOf(commit.revision_cache.revision) !== -1) {
             // This commit has already been processed, which means that there
             // are no more commits to fetch.
             fetchNextPage = false;

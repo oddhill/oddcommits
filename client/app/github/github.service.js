@@ -71,7 +71,7 @@ angular.module('oddcommitsApp')
             return;
           }
 
-          if (processedEvents.length && processedEvents[0] == event.id) {
+          if (processedEvents.indexOf(event.id) !== -1) {
             // This event has already been processed, which means that there
             // are no more events to fetch.
             fetchNextPage = false;
